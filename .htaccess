@@ -10,4 +10,4 @@ RewriteEngine On
 # Note: %{HTTP:X-Forwarded-Proto} is specific for Heroku
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https 
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+RewriteRule ^ ^https://prolifel.com%{REQUEST_URI} [L,R=301]
