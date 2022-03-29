@@ -29,12 +29,15 @@
         h1 {
             font-family: monospace;
         }
+        pre {
+            style="word-wrap: break-word; white-space: pre-wrap"
+        }
     </style>
 </head>
 
 <body>
     <h1>Hello!</h1>
-    <pre style="word-wrap: break-word; white-space: pre-wrap">
+    <pre>
 
 Wondering why my personal website looks like Tim Berners-Lee's first post?
 Yea, thank you Mr. Tim. You're our savior 🚀 (with extra modern detail lol)
