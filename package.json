@@ -1,0 +1,22 @@
+{
+  "name": "prolifel.com",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "eslint": "8.26.0",
+    "eslint-config-next": "13.0.1",
+    "next": "13.0.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "xterm": "^5.0.0",
+    "xterm-addon-fit": "^0.6.0",
+    "xterm-addon-web-links": "^0.7.0",
+    "xterm-for-react": "^1.0.4"
+  }
+}
