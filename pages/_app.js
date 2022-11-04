@@ -1,12 +1,8 @@
 import "../styles/globals.css";
-import dynamic from "next/dynamic";
+import "../styles/xterm.css";
 
 function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />;
 }
 
-export default dynamic(() => Promise.resolve(MyApp), {
-  ssr: false,
-});
-
-// export default MyApp
+export default MyApp;

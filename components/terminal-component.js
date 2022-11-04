@@ -65,7 +65,7 @@ const TerminalComponent = () => {
       term.open(document.getElementById("terminal"));
       document.getElementById("terminal").classList.add("loaded");
       fitAddon.fit();
-      console.log(";;");
+      // console.log(";;");
     }
 
     var isWebglEnabled = false;
