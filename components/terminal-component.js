@@ -65,7 +65,6 @@ const TerminalComponent = () => {
       term.open(document.getElementById("terminal"));
       document.getElementById("terminal").classList.add("loaded");
       fitAddon.fit();
-      // console.log(";;");
     }
 
     var isWebglEnabled = false;
@@ -226,12 +225,9 @@ const TerminalComponent = () => {
                   range: { start: { x: 52, y: 14 }, end: { x: 57, y: 14 } },
                   activate() {
                     isBaseTheme = !isBaseTheme;
-                    term.setOption(
-                      "theme",
-                      isBaseTheme ? baseTheme : otherTheme
-                    );
+                    term.options.theme = isBaseTheme ? baseTheme : otherTheme;
                     document
-                      .querySelector(".demo .inner")
+                      .querySelector("#terminal")
                       .classList.toggle("other-theme", !isBaseTheme);
                     term.write(
                       `\r\nActivated ${
