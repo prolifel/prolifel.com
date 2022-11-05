@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "client-dev": "cd client/ && next dev -p 3001",
+    "server-dev": "cd server/ && node index.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,8 +13,10 @@
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.1",
     "next": "13.0.1",
+    "node-pty": "^0.10.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "socket.io": "^4.5.3",
     "xterm": "^5.0.0",
     "xterm-addon-fit": "^0.6.0",
     "xterm-addon-web-links": "^0.7.0"
