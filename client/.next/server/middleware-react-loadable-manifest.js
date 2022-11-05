@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST={"index.js -> ../components/terminal-component":{"id":"index.js -> ../components/terminal-component","files":["static/chunks/components_terminal-component_js.js"]}}
