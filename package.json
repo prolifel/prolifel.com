@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "client-dev": "cd client/ && next dev -p 3001",
-    "server-dev": "cd server/ && node index.js",
+    "server-dev": "cd server/ && nodemon index.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,11 +12,14 @@
   "dependencies": {
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.1",
+    "express": "^4.18.2",
     "next": "13.0.1",
     "node-pty": "^0.10.1",
+    "nodemon": "^2.0.20",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "socket.io": "^4.5.3",
+    "socket.io-client": "^4.5.3",
     "xterm": "^5.0.0",
     "xterm-addon-fit": "^0.6.0",
     "xterm-addon-web-links": "^0.7.0"

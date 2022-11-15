@@ -1,10 +1,20 @@
-import React, { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
+let socket, term;
 
 const TerminalComponent = () => {
   useEffect(() => {
+    // init socket
+    function initSocket() {
+      socket = io("http://localhost:8000", { transports: ["websocket"] });
+      // socket.on("output", (data) => {
+      //   term.write(data);
+      // });
+    }
+
     var baseTheme = {
       foreground: "#F8F8F8",
       background: "#2D2E2C",
@@ -48,9 +58,10 @@ const TerminalComponent = () => {
       white: "#f1f1f0",
       brightWhite: "#eff0eb",
     };
+
     var isBaseTheme = true;
 
-    var term = new Terminal({
+    term = new Terminal({
       fontFamily: '"Cascadia Code", Menlo, monospace',
       theme: otherTheme,
       cursorBlink: true,
@@ -67,14 +78,14 @@ const TerminalComponent = () => {
       fitAddon.fit();
     }
 
-    var isWebglEnabled = false;
-    try {
-      const webgl = new window.WebglAddon.WebglAddon();
-      term.loadAddon(webgl);
-      isWebglEnabled = true;
-    } catch (e) {
-      console.warn("WebGL addon threw an exception during load", e);
-    }
+    // var isWebglEnabled = false;
+    // try {
+    //   const webgl = new window.WebglAddon.WebglAddon();
+    //   term.loadAddon(webgl);
+    //   isWebglEnabled = true;
+    // } catch (e) {
+    //   console.warn("WebGL addon threw an exception during load", e);
+    // }
 
     // Cancel wheel events from scrolling the page if the terminal has scrollback
     document.querySelector(".xterm").addEventListener("wheel", (e) => {
@@ -83,67 +94,54 @@ const TerminalComponent = () => {
       }
     });
 
-    function runFakeTerminal() {
-      if (term._initialized) {
+    function runFakeTerminal(terminal) {
+      if (terminal._initialized) {
         return;
       }
 
-      term._initialized = true;
-
-      term.prompt = () => {
-        const time = new Date(Date.now());
-        term.write(
-          "\r\n" +
-            "@prolifel [" +
-            time.getHours() +
-            ":" +
-            time.getMinutes() +
-            "]"
-        );
-        term.write("\r\n$ ");
-      };
+      terminal._initialized = true;
 
       // TODO: Use a nicer default font
-      term.writeln(
-        [
-          "    Xterm.js is the frontend component that powers many terminals including",
-          "                           \x1b[3mVS Code\x1b[0m, \x1b[3mHyper\x1b[0m and \x1b[3mTheia\x1b[0m!",
-          "",
-          " ┌ \x1b[1mFeatures\x1b[0m ──────────────────────────────────────────────────────────────────┐",
-          " │                                                                            │",
-          " │  \x1b[31;1mApps just work                         \x1b[32mPerformance\x1b[0m                        │",
-          " │   Xterm.js works with most terminal      Xterm.js is fast and includes an  │",
-          " │   apps like bash, vim and tmux           optional \x1b[3mWebGL renderer\x1b[0m           │",
-          " │                                                                            │",
-          " │  \x1b[33;1mAccessible                             \x1b[34mSelf-contained\x1b[0m                     │",
-          " │   A screen reader mode is available      Zero external dependencies        │",
-          " │                                                                            │",
-          " │  \x1b[35;1mUnicode support                        \x1b[36mAnd much more...\x1b[0m                   │",
-          " │   Supports CJK 語 and emoji \u2764\ufe0f            \x1b[3mLinks\x1b[0m, \x1b[3mthemes\x1b[0m, \x1b[3maddons\x1b[0m, \x1b[3mtyped API\x1b[0m  │",
-          " │                                            ^ Try clicking italic text      │",
-          " │                                                                            │",
-          " └────────────────────────────────────────────────────────────────────────────┘",
-          "",
-        ].join("\n\r")
-      );
+      // term.writeln(
+      //   [
+      //     "    Xterm.js is the frontend component that powers many terminals including",
+      //     "                           \x1b[3mVS Code\x1b[0m, \x1b[3mHyper\x1b[0m and \x1b[3mTheia\x1b[0m!",
+      //     "",
+      //     " ┌ \x1b[1mFeatures\x1b[0m ──────────────────────────────────────────────────────────────────┐",
+      //     " │                                                                            │",
+      //     " │  \x1b[31;1mApps just work                         \x1b[32mPerformance\x1b[0m                        │",
+      //     " │   Xterm.js works with most terminal      Xterm.js is fast and includes an  │",
+      //     " │   apps like bash, vim and tmux           optional \x1b[3mWebGL renderer\x1b[0m           │",
+      //     " │                                                                            │",
+      //     " │  \x1b[33;1mAccessible                             \x1b[34mSelf-contained\x1b[0m                     │",
+      //     " │   A screen reader mode is available      Zero external dependencies        │",
+      //     " │                                                                            │",
+      //     " │  \x1b[35;1mUnicode support                        \x1b[36mAnd much more...\x1b[0m                   │",
+      //     " │   Supports CJK 語 and emoji \u2764\ufe0f            \x1b[3mLinks\x1b[0m, \x1b[3mthemes\x1b[0m, \x1b[3maddons\x1b[0m, \x1b[3mtyped API\x1b[0m  │",
+      //     " │                                            ^ Try clicking italic text      │",
+      //     " │                                                                            │",
+      //     " └────────────────────────────────────────────────────────────────────────────┘",
+      //     "",
+      //   ].join("\n\r")
+      // );
 
-      term.writeln("Below is a simple emulated backend, try running `help`.");
-      term.prompt();
+      // term.writeln("Below is a simple emulated backend, try running `help`.");
 
-      term.onData((e) => {
+      terminal.onData((e) => {
         switch (e) {
           case "\u0003": // Ctrl+C
-            term.write("^C");
-            prompt(term);
+            terminal.write("^C");
+            prompt(terminal);
             break;
           case "\r": // Enter
-            runCommand(term, command);
+            // runCommand(terminal, command);
+            sendInput(terminal, command);
             command = "";
             break;
           case "\u007F": // Backspace (DEL)
             // Do not delete the prompt
-            if (term._core.buffer.x > 2) {
-              term.write("\b \b");
+            if (terminal._core.buffer.x > 2) {
+              terminal.write("\b \b");
               if (command.length > 0) {
                 command = command.substr(0, command.length - 1);
               }
@@ -157,13 +155,13 @@ const TerminalComponent = () => {
               e >= "\u00a0"
             ) {
               command += e;
-              term.write(e);
+              terminal.write(e);
             }
         }
       });
 
       // Create a very simple link provider which hardcodes links for certain lines
-      term.registerLinkProvider({
+      terminal.registerLinkProvider({
         provideLinks(bufferLineNumber, callback) {
           switch (bufferLineNumber) {
             case 2:
@@ -225,16 +223,18 @@ const TerminalComponent = () => {
                   range: { start: { x: 52, y: 14 }, end: { x: 57, y: 14 } },
                   activate() {
                     isBaseTheme = !isBaseTheme;
-                    term.options.theme = isBaseTheme ? baseTheme : otherTheme;
+                    terminal.options.theme = isBaseTheme
+                      ? baseTheme
+                      : otherTheme;
                     document
                       .querySelector("#terminal")
                       .classList.toggle("other-theme", !isBaseTheme);
-                    term.write(
+                    terminal.write(
                       `\r\nActivated ${
                         isBaseTheme ? "xterm.js" : "snazzy"
                       } theme`
                     );
-                    prompt(term);
+                    prompt(terminal);
                   },
                 },
                 {
@@ -267,6 +267,12 @@ const TerminalComponent = () => {
       term.write("\r\n$ ");
     }
 
+    function write(terminal, data) {
+      command = "";
+      console.log("DATA ADA DISINI COK" + data);
+      terminal.writeln([data].join("\n\r"));
+    }
+
     var command = "";
     var commands = {
       help: {
@@ -287,7 +293,7 @@ const TerminalComponent = () => {
       ls: {
         f: () => {
           term.writeln(["a", "bunch", "of", "fake", "files"].join("\r\n"));
-          term.prompt(term);
+          // term.prompt(term);
         },
         description: "Prints a fake directory structure",
       },
@@ -323,28 +329,32 @@ const TerminalComponent = () => {
                 isWebglEnabled ? "webgl" : "canvas"
               } renderer`
             );
-            term.prompt();
+            // term.prompt();
           });
         },
         description: "Simulate a lot of data coming from a process",
       },
     };
 
-    function runCommand(term, text) {
-      const command = text.trim().split(" ")[0];
+    const sendInput = (terminal, input) => {
+      const command = input.trim().split(" ")[0];
       if (command.length > 0) {
-        term.writeln("");
-        if (command in commands) {
-          commands[command].f();
-          return;
-        }
-        term.writeln(`${command}: command not found`);
+        socket.emit("input", command + "\r\n");
       }
-      // prompt(term)
-      term.prompt();
+    };
+
+    async function initSocketOutput(terminal) {
+      await socket.on("output", (data) => {
+        console.log(`ini output dalem faketerminal: ${data}`);
+        // terminal.write(data);
+        // write(terminal, data);
+        terminal.writeln([data].join("\n\r"));
+      });
     }
 
-    runFakeTerminal();
+    initSocket();
+    initSocketOutput(term);
+    runFakeTerminal(term);
   }, []);
 
   return <div id="terminal" />;

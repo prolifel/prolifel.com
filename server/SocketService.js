@@ -25,6 +25,7 @@ class SocketService {
 
       this.pty = new PTYService(this.socket);
       this.socket.on("input", (input) => {
+        console.log(`input: ${input}`);
         this.pty.write(input);
       });
     });

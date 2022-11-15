@@ -10,9 +10,30 @@ const XTerminalWithNoSSR = dynamic(
 );
 
 export default function Home() {
+  // useEffect(() => {
+  //   async function initSocket() {
+  //     await socketInitializer();
+  //   }
+  //   initSocket();
+  // }, []);
+
+  // const socketInitializer = async () => {
+  //   await fetch(serverAddress);
+  //   socket = io();
+
+  //   socket.on("connect", () => {
+  //     console.log("connected");
+  //   });
+
+  //   socket.on("update-input", (msg) => {
+  //     setInput(msg);
+  //   });
+  // };
+
   return (
     <main>
       <XTerminalWithNoSSR />
+      {/* <div id="terminal-container"></div> */}
     </main>
   );
 }
