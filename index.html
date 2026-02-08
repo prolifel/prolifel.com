@@ -111,9 +111,13 @@
       border: none;
       color: #c9d1d9;
       font-family: 'Fira Code', 'Courier New', monospace;
-      font-size: 15px;
+      font-size: 16px;
       outline: none;
       caret-color: #7ee787;
+      /* Prevent iOS auto-zoom on focus */
+      transform: scale(1);
+      /* Better touch handling */
+      touch-action: manipulation;
     }
 
     .cursor {
@@ -139,18 +143,60 @@
       text-decoration: underline;
     }
 
+    /* Mobile responsive */
     @media (max-width: 600px) {
       #terminal {
-        padding: 12px;
+        padding: 10px;
+        max-width: 100%;
       }
+
       body {
-        font-size: 13px;
+        font-size: 12px;
       }
+
+      /* Keep input at 16px to prevent iOS zoom */
       #command-input {
-        font-size: 13px;
+        font-size: 16px;
       }
+
       #prompt {
-        font-size: 13px;
+        font-size: 11px;
+      }
+
+      .line {
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* Make links wrap properly on mobile */
+      a {
+        word-break: break-all;
+      }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 360px) {
+      #terminal {
+        padding: 8px;
+      }
+
+      body {
+        font-size: 11px;
+      }
+
+      #prompt::after {
+        content: '$';
+        margin-left: 2px;
+      }
+
+      #prompt {
+        color: #7ee787;
+        margin-right: 4px;
+      }
+
+      /* Shorten prompt text on very small screens */
+      #prompt {
+        font-size: 0;
       }
     }
   </style>
@@ -160,7 +206,7 @@
     <div id="output"></div>
     <div id="input-line">
       <span id="prompt">visitor@prolifel:~$</span>
-      <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" />
+      <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" inputmode="text" />
     </div>
   </div>
 
