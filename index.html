@@ -1,100 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex" />
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poltawski+Nowy:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      pre {
-        white-space: pre-line;
-        word-wrap: break-word;
-      }
-      * {
-        font-family: "Poltawski Nowy", serif !important;
-      }
-      ol {
-        margin-top: -18px !important;
-      }
-      li {
-        margin-bottom: -16px;
-      }
-      #meow {
-        position: fixed;
-        bottom: 0;
-        right: 5px;
-      }
-      @media screen and (min-width: 320px) {
-        #meow > img {
-          height: 25vh;
-        }
-      }
-      @media screen and (min-width: 768px) {
-        #meow > img {
-          height: 40vh;
-        }
-        #meow {
-          right: 50%;
-        }
-      }
-    </style>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
-      crossorigin="anonymous"
-    />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <title>prolifel.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <body>
-    <div class="container-fluid">
-      <div class="d-flex flex-column p-3">
-        <div class="mb-3" style="max-width: 264px"></div>
-        <h1>hello, <i>warganet!</i></h1>
-        <div class="d-flex">
-          <pre>
-<small class="text-muted">*warganet = netizens</small>
+    body {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-size: 15px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
 
-wondering why my personal website looks like the first <a target="_blank" href="http://info.cern.ch/hypertext/WWW/TheProject.html">web page</a>? yea, thank you Mr. Tim Berners-Lee. you're our savior 🚀 (with extra modern detail lol)
+    #terminal {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-grit bedeutet die fähigkeit, bei etwas durchzuhalten, auch wenn es schwierig wird. 
-  es bedeutet, leidenschaft und ausdauer für langfristige ziele zu haben. 
-    menschen mit grit geben nicht leicht auf, selbst wenn sie mit herausforderungen oder rückschlägen konfrontiert werden. 
-      sie arbeiten hart weiter und bleiben entschlossen, bis sie erfolg haben. 
+    #output {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 16px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    #output::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #output::-webkit-scrollbar-track {
+      background: #0d1117;
+    }
+
+    #output::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+
+    #output::-webkit-scrollbar-thumb:hover {
+      background: #484f58;
+    }
+
+    .line {
+      margin-bottom: 4px;
+    }
+
+    .command-line {
+      color: #7ee787;
+    }
+
+    .error {
+      color: #ff7b72;
+    }
+
+    .success {
+      color: #7ee787;
+    }
+
+    .info {
+      color: #58a6ff;
+    }
+
+    .muted {
+      color: #8b949e;
+    }
+
+    .file {
+      color: #c9d1d9;
+    }
+
+    .directory {
+      color: #d29922;
+    }
+
+    #input-line {
+      display: flex;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #30363d;
+    }
+
+    #prompt {
+      color: #7ee787;
+      margin-right: 8px;
+      white-space: nowrap;
+    }
+
+    #command-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #c9d1d9;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 15px;
+      outline: none;
+      caret-color: #7ee787;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 18px;
+      background-color: #7ee787;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      #terminal {
+        padding: 12px;
+      }
+      body {
+        font-size: 13px;
+      }
+      #command-input {
+        font-size: 13px;
+      }
+      #prompt {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">
+    <div id="output"></div>
+    <div id="input-line">
+      <span id="prompt">visitor@prolifel:~$</span>
+      <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false" />
+    </div>
+  </div>
+
+  <script>
+    const fileSystem = {
+      'about.txt': `hello, warganet!
+
+wondering why this personal website looks like a terminal?
+because it's cool, that's why.
+
+---
+grit bedeutet die fähigkeit, bei etwas durchzuhalten, auch wenn es schwierig wird.
+es bedeutet, leidenschaft und ausdauer für langfristige ziele zu haben.
+menschen mit grit geben nicht leicht auf, selbst wenn sie mit herausforderungen
+oder rückschlägen konfrontiert werden.
+sie arbeiten hart weiter und bleiben entschlossen, bis sie erfolg haben.
+
+---
 
 thank you!
 terima kasih!
 شكرًا لك
 고맙습니다
-ありがとうございました
+ありがとうござしました
 danke!
 merci!
 matur nuwun!
-        </pre>
-        </div>
-        <div id="meow">
-          <img
-            src="https://media2.giphy.com/media/4BJCvMoLPePq8/giphy.gif"
-            title="Source: undefined"
-            alt="Source: undefined"
-            draggable="false"
-            loading="eager"
-          />
-        </div>
-      </div>
-    </div>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+`
+    };
+
+    const commands = {
+      'ls': () => {
+        return Object.keys(fileSystem).map(f => `  ${f}`).join('\n');
+      },
+      'help': () => {
+        return `Available commands:
+  ls          List files
+  cat <file>  Display file contents
+  whoami      Show current user
+  clear       Clear terminal
+  help        Show this help message`;
+      },
+      'whoami': () => 'visitor',
+      'clear': () => '__CLEAR__',
+      'sudo': () => 'nice try!'
+    };
+
+    const welcomeMessage = `Welcome to prolifel.com, visitor!
+
+This is a terminal-style personal website.
+Type 'help' to see available commands.
+Type 'ls' to browse available files.
+
+---
+
+`;
+
+    let commandHistory = [];
+    let historyIndex = -1;
+
+    const output = document.getElementById('output');
+    const input = document.getElementById('command-input');
+
+    function printLine(text, className = '') {
+      const line = document.createElement('div');
+      line.className = 'line ' + className;
+      line.textContent = text;
+      output.appendChild(line);
+      scrollToBottom();
+    }
+
+    function printHTML(html) {
+      const line = document.createElement('div');
+      line.className = 'line';
+      line.innerHTML = html;
+      output.appendChild(line);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function printCommand(cmd) {
+      printLine(`visitor@prolifel:~$ ${cmd}`, 'command-line');
+    }
+
+    function handleCommand(cmd) {
+      cmd = cmd.trim();
+      if (!cmd) return;
+
+      commandHistory.push(cmd);
+      historyIndex = commandHistory.length;
+      printCommand(cmd);
+
+      const parts = cmd.split(' ');
+      const command = parts[0].toLowerCase();
+      const args = parts.slice(1);
+
+      if (command === 'cat') {
+        if (args.length === 0) {
+          printLine('cat: missing file operand', 'error');
+          printLine("Usage: cat <file>", 'muted');
+        } else if (args.length > 1) {
+          printLine('cat: too many arguments', 'error');
+        } else {
+          const filename = args[0];
+          if (fileSystem[filename]) {
+            printLine(fileSystem[filename]);
+          } else {
+            printLine(`cat: ${filename}: No such file or directory`, 'error');
+          }
+        }
+      } else if (commands[command]) {
+        const result = commands[command]();
+        if (result === '__CLEAR__') {
+          output.innerHTML = '';
+        } else if (result) {
+          printLine(result);
+        }
+      } else {
+        printLine(`${command}: command not found`, 'error');
+        printLine("Type 'help' for available commands", 'muted');
+      }
+    }
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleCommand(input.value);
+        input.value = '';
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (historyIndex > 0) {
+          historyIndex--;
+          input.value = commandHistory[historyIndex];
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (historyIndex < commandHistory.length - 1) {
+          historyIndex++;
+          input.value = commandHistory[historyIndex];
+        } else {
+          historyIndex = commandHistory.length;
+          input.value = '';
+        }
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        const partial = input.value.toLowerCase();
+        if (partial.startsWith('cat ')) {
+          const search = partial.slice(4).toLowerCase();
+          const matches = Object.keys(fileSystem).filter(f => f.toLowerCase().startsWith(search));
+          if (matches.length === 1) {
+            input.value = 'cat ' + matches[0];
+          } else if (matches.length > 1) {
+            printCommand(input.value);
+            printLine(matches.join('  '), 'muted');
+            input.value = 'cat ' + search;
+          }
+        } else {
+          const matches = Object.keys(commands).filter(c => c.startsWith(partial));
+          if (matches.length === 1) {
+            input.value = matches[0] + ' ';
+          }
+        }
+      }
+    });
+
+    // Focus input when clicking anywhere in terminal
+    document.getElementById('terminal').addEventListener('click', () => {
+      input.focus();
+    });
+
+    // Initial welcome message
+    output.innerHTML = '';
+    const lines = welcomeMessage.split('\n');
+    lines.forEach(line => {
+      const div = document.createElement('div');
+      div.className = 'line';
+      if (line.startsWith('http')) {
+        const link = document.createElement('a');
+        link.href = line;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = line;
+        div.appendChild(link);
+      } else {
+        div.textContent = line || ' ';
+      }
+      output.appendChild(div);
+    });
+  </script>
+</body>
 </html>
