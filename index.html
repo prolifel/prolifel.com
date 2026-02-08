@@ -374,8 +374,8 @@ Type 'ls' to browse available files.
       }
     });
 
-    // Focus input when clicking anywhere in terminal
-    document.getElementById('terminal').addEventListener('click', () => {
+    // Focus input when clicking the input line (not output area, to allow scrolling)
+    document.getElementById('input-line').addEventListener('click', () => {
       input.focus();
     });
 
