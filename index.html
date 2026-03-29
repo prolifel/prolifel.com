@@ -212,21 +212,6 @@
 
   <script>
     const fileSystem = {
-      'klipi.txt': `Klipi - macOS Clipboard Manager
-
-A lightweight clipboard manager for macOS that keeps track of your clipboard history.
-
-Features:
-- Clipboard history tracking
-- Quick access to recent clips
-- Clean, native macOS interface
-- Open source (MIT license)
-
-GitHub: https://github.com/prolifel/klipi
-
----
-Status: In Development
-`,
       'about.txt': `hello, warganet!
 
 wondering why this personal website looks like a terminal?
@@ -249,16 +234,94 @@ terima kasih!
 danke!
 merci!
 matur nuwun!
+`,
+      'oss-projects': {
+        __type: 'directory',
+        'klipi.txt': `Klipi - macOS Clipboard Manager
+
+A lightweight clipboard manager for macOS that keeps track of your clipboard history.
+
+Features:
+- Clipboard history tracking
+- Quick access to recent clips
+- Clean, native macOS interface
+- Open source (MIT license)
+
+GitHub: https://github.com/prolifel/klipi
+
+---
+Status: In Development
 `
+      }
     };
+
+    let currentDir = '/';
+
+    function updatePrompt() {
+      const prompt = document.getElementById('prompt');
+      const path = currentDir === '/' ? '~' : currentDir.replace('/', '~/');
+      prompt.textContent = `visitor@prolifel:${path}$`;
+    }
+
+    function getCurrentDir() {
+      return resolvePath(currentDir);
+    }
+
+    function resolvePath(path) {
+      if (path === '/') return fileSystem;
+      const parts = path.split('/').filter(p => p);
+      let current = fileSystem;
+      for (const part of parts) {
+        if (current[part] && current[part].__type === 'directory') {
+          current = current[part];
+        } else {
+          return null;
+        }
+      }
+      return current;
+    }
 
     const commands = {
       'ls': () => {
-        return Object.keys(fileSystem).map(f => `  ${f}`).join('\n');
+        const dir = getCurrentDir();
+        const items = Object.keys(dir).filter(name => name !== '__type').map(name => {
+          if (dir[name].__type === 'directory') {
+            return { name: name + '/', isDir: true };
+          }
+          return { name, isDir: false };
+        }).sort((a, b) => {
+          if (a.isDir !== b.isDir) return b.isDir - a.isDir;
+          return a.name.localeCompare(b.name);
+        });
+        return items.map(i => i.isDir ? `<span class="directory">${i.name}</span>` : i.name).join('  ') || '  ';
       },
+      'cd': (args) => {
+        if (args.length === 0 || args[0] === '~') {
+          currentDir = '/';
+          return '';
+        }
+        if (args[0] === '..') {
+          if (currentDir !== '/') {
+            const parts = currentDir.split('/').filter(p => p);
+            parts.pop();
+            currentDir = parts.length === 0 ? '/' : '/' + parts.join('/');
+          }
+          return '';
+        }
+        const target = args[0];
+        const dir = getCurrentDir();
+        if (dir[target] && dir[target].__type === 'directory') {
+          currentDir = currentDir === '/' ? '/' + target : currentDir + '/' + target;
+          return '';
+        }
+        return `cd: ${target}: No such directory`;
+      },
+      'pwd': () => currentDir,
       'help': () => {
         return `Available commands:
-  ls          List files
+  ls          List files and directories
+  cd <dir>    Change directory
+  pwd         Print working directory
   cat <file>  Display file contents
   whoami      Show current user
   clear       Clear terminal
@@ -329,19 +392,29 @@ Type 'ls' to browse available files.
           printLine('cat: too many arguments', 'error');
         } else {
           const filename = args[0];
-          if (fileSystem[filename]) {
-            printLine(fileSystem[filename]);
+          const dir = getCurrentDir();
+          if (dir[filename]) {
+            if (dir[filename].__type === 'directory') {
+              printLine(`cat: ${filename}: Is a directory`, 'error');
+            } else {
+              printLine(dir[filename]);
+            }
           } else {
             printLine(`cat: ${filename}: No such file or directory`, 'error');
           }
         }
       } else if (commands[command]) {
-        const result = commands[command]();
+        const result = commands[command](args);
         if (result === '__CLEAR__') {
           output.innerHTML = '';
         } else if (result) {
-          printLine(result);
+          if (command === 'ls') {
+            printHTML(result);
+          } else {
+            printLine(result);
+          }
         }
+        updatePrompt();
       } else {
         printLine(`${command}: command not found`, 'error');
         printLine("Type 'help' for available commands", 'muted');
@@ -370,15 +443,17 @@ Type 'ls' to browse available files.
       } else if (e.key === 'Tab') {
         e.preventDefault();
         const partial = input.value.toLowerCase();
-        if (partial.startsWith('cat ')) {
-          const search = partial.slice(4).toLowerCase();
-          const matches = Object.keys(fileSystem).filter(f => f.toLowerCase().startsWith(search));
+        if (partial.startsWith('cat ') || partial.startsWith('cd ')) {
+          const cmdPrefix = partial.startsWith('cat ') ? 'cat ' : 'cd ';
+          const search = partial.slice(cmdPrefix.length).toLowerCase();
+          const dir = getCurrentDir();
+          const matches = Object.keys(dir).filter(f => f !== '__type' && f.toLowerCase().startsWith(search));
           if (matches.length === 1) {
-            input.value = 'cat ' + matches[0];
+            input.value = cmdPrefix + matches[0];
           } else if (matches.length > 1) {
             printCommand(input.value);
             printLine(matches.join('  '), 'muted');
-            input.value = 'cat ' + search;
+            input.value = cmdPrefix + search;
           }
         } else {
           const matches = Object.keys(commands).filter(c => c.startsWith(partial));
