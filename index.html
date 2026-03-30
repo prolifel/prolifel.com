@@ -469,6 +469,28 @@ Type 'ls' to browse available files.
       input.focus();
     });
 
+    // Scroll input into view on mobile when keyboard opens
+    function scrollInputIntoView() {
+      setTimeout(() => {
+        input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+      // Additional delay for slow keyboard animations
+      setTimeout(() => {
+        input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 300);
+    }
+
+    input.addEventListener('focus', scrollInputIntoView);
+
+    // Handle viewport resize (keyboard open/close on mobile)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (document.activeElement === input) {
+          scrollInputIntoView();
+        }
+      });
+    }
+
     // Initial welcome message
     output.innerHTML = '';
     const lines = welcomeMessage.split('\n');
