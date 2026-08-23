@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -130,8 +131,16 @@
     }
 
     @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
     }
 
     a {
@@ -201,6 +210,7 @@
     }
   </style>
 </head>
+
 <body>
   <div id="terminal">
     <div id="output"></div>
@@ -250,7 +260,17 @@ Features:
 GitHub: https://github.com/prolifel/klipi
 
 ---
-Status: In Development
+Status: Done
+`,
+        'kronize.txt': `lambda on baremetal
+
+A lightweight, high-performance, and low-latency serverless framework for bare-metal servers.
+Runs a Python code, using a Docker container for a repetitive tasks.
+
+GitHub: https://github.com/prolifel/kronize
+
+---
+Status: Done
 `
       }
     };
@@ -511,4 +531,5 @@ Type 'ls' to browse available files.
     });
   </script>
 </body>
+
 </html>
